@@ -86,7 +86,7 @@ function SimpleVoiceAssistant(props: {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const startAudio = () => {
     // Create an audio element and load your local file from the public folder
-    const audioElement = new Audio("/audio/sample.mp3"); // Path to your audio file
+    const audioElement = new Audio("/audio/sampleAudio.mp3"); // Path to your audio file
     audioElement.loop = true; // Optional: loop the audio
     audioElement.autoplay = true; // Add autoplay attribute
 
