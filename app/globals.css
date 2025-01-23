@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --lk-va-bar-width: 72px;
+  --lk-control-bar-height: unset;
+}
+
+.agent-visualizer > .lk-audio-bar {
+  width: 72px;
+}
+
+.lk-agent-control-bar {
+  @apply border-t-0 p-0 h-min mr-4;
+}
+
+.lk-disconnect-button {
+  @apply h-[36px] hover:bg-[#6b221a] hover:text-[white] bg-[#31100c] border-[#6b221a];
+}
+.visualizer-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  width: 300px;
+
+  background: linear-gradient(
+      135deg,
+      #ff7eb3,
+      #ff758c,
+      #ff95c5,
+      #85d8ce,
+      #88a3e6
+    ),
+    radial-gradient(circle, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
+
+  background-blend-mode: overlay;
+
+  background-size: 300% 300%;
+  animation: gradientAnimation 8s ease infinite;
+
+  border-radius: 50%;
+  box-shadow: 0 0 30px 10px rgba(255, 255, 255, 0.5),
+    0 0 60px 30px rgba(255, 206, 86, 0.5);
+}
+.visualizer-canvas {
+  border-radius: 50%;
+  box-shadow: 0 0 20px 5px rgba(255, 99, 132, 0.8),
+    0 0 40px 15px rgba(54, 162, 235, 0.8), 0 0 60px 30px rgba(255, 206, 86, 0.5);
+  background-color: transparent;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
