@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   LiveKitRoom,
   useVoiceAssistant,
-  BarVisualizer,
   RoomAudioRenderer,
   VoiceAssistantControlBar,
   AgentState,
@@ -144,6 +143,7 @@ function ControlBar(props: {
   const krisp = useKrispNoiseFilter();
   useEffect(() => {
     krisp.setNoiseFilterEnabled(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

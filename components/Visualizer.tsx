@@ -1,8 +1,9 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { TrackReference } from "@livekit/components-react";
+// import { TrackReference } from "@livekit/components-react";
 
 interface VisualizerProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   state?: any; // Optional, replace with a specific type if known
   trackRef: HTMLAudioElement | null;
 }
