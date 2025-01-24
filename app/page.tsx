@@ -100,12 +100,11 @@ function SimpleVoiceAssistant(props: {
   audioTrack: HTMLAudioElement | null;
   isAnimating: boolean;
 }) {
-  // const { state, audioTrack } = useVoiceAssistant();
-  // useEffect(() => {
-  //   props.onStateChange(state);
-  // }, [props, state]);
+  const { state, audioTrack } = useVoiceAssistant();
+  useEffect(() => {
+    props.onStateChange(state);
+  }, [props, state]);
 
-  const { state } = useVoiceAssistant();
 
   useEffect(() => {
     // Clean up when component unmounts
@@ -124,7 +123,7 @@ function SimpleVoiceAssistant(props: {
     <div className=" mx-auto relative h-full">
       <Visualizer
         // state={state}
-        trackRef={props.audioTrack}
+        trackRef={audioTrack}
         isAnimating={props.isAnimating}
       />
     </div>
@@ -150,7 +149,7 @@ function ControlBar(props: {
   const handleStartAConversationClicked = () => {
     props.onConnectButtonClicked();
     props.setIsAnimating(true);
-    props.startAudio();
+    // props.startAudio();
   };
 
   return (

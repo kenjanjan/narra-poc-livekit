@@ -1,11 +1,11 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-// import { TrackReference } from "@livekit/components-react";
+import { TrackReference } from "@livekit/components-react";
 
 interface VisualizerProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   state?: any; // Optional, replace with a specific type if known
-  trackRef: HTMLAudioElement | null;
+  trackRef: TrackReference | undefined;
   isAnimating: boolean;
 }
 
@@ -103,7 +103,15 @@ const Visualizer: React.FC<VisualizerProps> = ({ trackRef, isAnimating }) => {
   const [scaleFactor, setScaleFactor] = useState(1); // State to track the scale factor
 
   useEffect(() => {
-    if (!trackRef) return;
+    if (!trackRef?.publication || !trackRef.publication.track) return;
+
+    const track = trackRef.publication.track;
+
+    // Ensure track is an audio track
+    if (track.kind !== "audio") {
+      console.warn("Visualizer only works with audio tracks.");
+      return;
+    }
 
     // Initialize audio context and analyser
     const audioContext = new (window.AudioContext || window.AudioContext)();
@@ -111,8 +119,9 @@ const Visualizer: React.FC<VisualizerProps> = ({ trackRef, isAnimating }) => {
     analyser.fftSize = 256; // Controls the data resolution
     const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
-    // Connect the audio track to the analyser
-    const source = audioContext.createMediaElementSource(trackRef);
+    // Create a MediaStream from the track and connect to the analyser
+    const mediaStream = new MediaStream([track.mediaStreamTrack]);
+    const source = audioContext.createMediaStreamSource(mediaStream);
     source.connect(analyser);
     analyser.connect(audioContext.destination);
 
