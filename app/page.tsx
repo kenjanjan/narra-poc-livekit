@@ -44,10 +44,24 @@ export default function Page() {
     updateConnectionDetails(connectionDetailsData);
   }, []);
 
+  const [audioTrack, setAudioTrack] = useState<HTMLAudioElement | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const startAudio = () => {
+    const audioElement = new Audio("/audio/sample2.mp3");
+    audioElement.loop = true;
+    audioElement.autoplay = true;
+
+    // Start playing the audio
+    audioElement.play().catch((error) => {
+      console.error("Error starting audio playback:", error);
+    });
+    setAudioTrack(audioElement);
+  };
+
   return (
     <main
       data-lk-theme="default"
-      className="h-full grid content-center bg-[var(--lk-bg)]"
+      className="h-full grid content-center bg-white"
     >
       <LiveKitRoom
         token={connectionDetails?.participantToken}
@@ -58,13 +72,21 @@ export default function Page() {
         onMediaDeviceFailure={onDeviceFailure}
         onDisconnected={() => {
           updateConnectionDetails(undefined);
+          setAudioTrack(null); // SAMPLE AUDIO TEST - CAN BE REMOVED
+          setIsAnimating(false);
         }}
-        className="grid grid-rows-[2fr_1fr] items-center"
+        className="grid grid-rows-[2fr_1fr] items-center bg-white"
       >
-        <SimpleVoiceAssistant onStateChange={setAgentState} />
+        <SimpleVoiceAssistant
+          onStateChange={setAgentState}
+          isAnimating={isAnimating}
+          audioTrack={audioTrack}
+        />
         <ControlBar
           onConnectButtonClicked={onConnectButtonClicked}
           agentState={agentState}
+          setIsAnimating={setIsAnimating}
+          startAudio={startAudio}
         />
         <RoomAudioRenderer />
         <NoAgentNotification state={agentState} />
@@ -75,59 +97,36 @@ export default function Page() {
 
 function SimpleVoiceAssistant(props: {
   onStateChange: (state: AgentState) => void;
+  audioTrack: HTMLAudioElement | null;
+  isAnimating: boolean;
 }) {
   // const { state, audioTrack } = useVoiceAssistant();
   // useEffect(() => {
   //   props.onStateChange(state);
   // }, [props, state]);
 
-  const [audioTrack, setAudioTrack] = useState<HTMLAudioElement | null>(null);
-  const { state } = useVoiceAssistant(); // You can still use the state from the VoiceAssistant
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const startAudio = () => {
-    // Create an audio element and load your local file from the public folder
-    const audioElement = new Audio("/audio/sampleAudio.mp3"); // Path to your audio file
-    audioElement.loop = true; // Optional: loop the audio
-    audioElement.autoplay = true; // Add autoplay attribute
-
-    // Event listener for when the audio starts playing
-    audioElement.onplay = () => setIsPlaying(true);
-
-    // Event listener for when the audio is paused
-    audioElement.onpause = () => setIsPlaying(false);
-
-    // Start playing the audio
-    audioElement.play().catch((error) => {
-      console.error("Error starting audio playback:", error);
-    });
-    setAudioTrack(audioElement);
-  };
+  const { state } = useVoiceAssistant();
 
   useEffect(() => {
     // Clean up when component unmounts
     return () => {
-      if (audioTrack) {
-        audioTrack.pause();
-        audioTrack.currentTime = 0;
+      if (props.audioTrack) {
+        props.audioTrack.pause();
+        props.audioTrack.currentTime = 0;
       }
     };
-  }, [audioTrack]);
+  }, [props.audioTrack]);
 
   useEffect(() => {
     props.onStateChange(state); // Pass the state to the parent component
   }, [props, state]);
   return (
-    <div className=" max-w-[90vw] mx-auto">
-      <button onClick={startAudio}>Play Audio</button>
-      {isPlaying ? "Playing" : "Paused"}
-      <Visualizer state={state} trackRef={audioTrack} />
-      {/* <BarVisualizer
-        state={state}
-        barCount={5}
-        trackRef={audioTrack}
-        className="agent-visualizer"
-        options={{ minHeight: 24 }}
-      /> */}
+    <div className=" mx-auto relative h-full">
+      <Visualizer
+        // state={state}
+        trackRef={props.audioTrack}
+        isAnimating={props.isAnimating}
+      />
     </div>
   );
 }
@@ -135,6 +134,8 @@ function SimpleVoiceAssistant(props: {
 function ControlBar(props: {
   onConnectButtonClicked: () => void;
   agentState: AgentState;
+  setIsAnimating: (isAnimating: boolean) => void; // Add the setIsAnimating prop
+  startAudio: () => void; // Add the startAudio prop
 }) {
   /**
    * Use Krisp background noise reduction when available.
@@ -146,6 +147,12 @@ function ControlBar(props: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleStartAConversationClicked = () => {
+    props.onConnectButtonClicked();
+    props.setIsAnimating(true);
+    props.startAudio();
+  };
+
   return (
     <div className="relative h-[100px]">
       <AnimatePresence>
@@ -155,8 +162,10 @@ function ControlBar(props: {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, top: "-10px" }}
             transition={{ duration: 1, ease: [0.09, 1.04, 0.245, 1.055] }}
-            className="uppercase absolute left-1/2 -translate-x-1/2 px-4 py-2 bg-white text-black rounded-md"
-            onClick={() => props.onConnectButtonClicked()}
+            className="uppercase absolute left-1/2 -translate-x-1/2 px-4 py-2 mt-20 bg-black text-white rounded-md"
+            onClick={() => {
+              handleStartAConversationClicked();
+            }}
           >
             Start a conversation
           </motion.button>
@@ -164,7 +173,7 @@ function ControlBar(props: {
       </AnimatePresence>
       <Link
         href={"/generate-story"}
-        className="bg-white uppercase absolute mt-[60px] left-1/2 -translate-x-1/2 rounded-md px-4 py-2 text-black "
+        className="bg-black uppercase absolute mt-[140px] left-1/2 -translate-x-1/2 rounded-md px-4 py-2 text-white "
       >
         Generate a story
       </Link>

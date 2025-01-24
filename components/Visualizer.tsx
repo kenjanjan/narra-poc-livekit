@@ -6,6 +6,7 @@ interface VisualizerProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   state?: any; // Optional, replace with a specific type if known
   trackRef: HTMLAudioElement | null;
+  isAnimating: boolean;
 }
 
 // const Visualizer: React.FC<VisualizerProps> = ({ trackRef }) => {
@@ -93,7 +94,7 @@ interface VisualizerProps {
 //   );
 // };
 
-const Visualizer: React.FC<VisualizerProps> = ({ trackRef }) => {
+const Visualizer: React.FC<VisualizerProps> = ({ trackRef, isAnimating }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -132,11 +133,11 @@ const Visualizer: React.FC<VisualizerProps> = ({ trackRef }) => {
       const maxFrequency = Math.max(...Array.from(dataArray));
 
       // Calculate the scale factor based on the maximum frequency (loudness)
-      const newScaleFactor = (maxFrequency / 500) * 0.5 + 1; // Dynamic scaling based on frequency amplitude
+      const newScaleFactor = (maxFrequency / 250) * 0.5 + 1; // Dynamic scaling based on frequency amplitude
       setScaleFactor(newScaleFactor); // Update the scaleFactor state
 
       // Calculate the new size for the canvas and the wrapper div based on the scale factor
-      const newSize = 300 * newScaleFactor; // Starting size of 300px, adjusted by scaleFactor
+      const newSize = 200 * newScaleFactor; // Starting size of 300px, adjusted by scaleFactor
       canvas.width = newSize;
       canvas.height = newSize;
 
@@ -158,23 +159,112 @@ const Visualizer: React.FC<VisualizerProps> = ({ trackRef }) => {
   }, [trackRef]);
 
   return (
-    <div className="flex h-full w-full justify-center items-center">
+    <div className="h-full w-full relative flex items-center justify-center z-0">
+      {/* Outer Circle3 */}
+      <svg
+        width="350"
+        height="350"
+        className="transform rotate-[90deg] absolute"
+      >
+        <circle
+          cx="175"
+          cy="175"
+          r="165"
+          stroke={"rgba(221, 221, 221, 0.5)"}
+          strokeWidth="17"
+          fill="none"
+          strokeDasharray="1036.72"
+          strokeDashoffset={isAnimating ? "0" : "518.36"}
+          className="transition-all duration-[1300ms] ease-in-out"
+        />
+      </svg>
+
+      {/* Outer Circle2 */}
+      <svg
+        width="350"
+        height="350"
+        className="transform rotate-[120deg] absolute"
+      >
+        <circle
+          cx="175"
+          cy="175"
+          r="135"
+          stroke={
+            scaleFactor > 1.4 && isAnimating
+              ? "rgba(255, 165, 0, 0.5)"
+              : "rgba(221, 221, 221, 0.5)"
+          }
+          strokeWidth="17"
+          fill="none"
+          strokeDasharray="848.23"
+          strokeDashoffset={isAnimating ? "0" : "424.12"}
+          className="transition-all duration-[1200ms] ease-in-out"
+        />
+      </svg>
+
+      {/* Outer Circle */}
+      <svg
+        width="350"
+        height="350"
+        className="transform rotate-[110deg] absolute"
+      >
+        <circle
+          cx="175"
+          cy="175"
+          r="105"
+          stroke={
+            scaleFactor > 1.4 && isAnimating
+              ? "rgba(255, 165, 0, 0.5)"
+              : "rgba(221, 221, 221, 0.5)"
+          }
+          strokeWidth="17"
+          fill="none"
+          strokeDasharray="659.73"
+          strokeDashoffset={isAnimating ? "0" : "329.86"}
+          className="transition-all duration-[1100ms] ease-in-out"
+        />
+      </svg>
+
+      {/* Inner Circle */}
+      <svg
+        width="350"
+        height="350"
+        className="transform rotate-[90deg] relative"
+      >
+        <circle
+          cx="175"
+          cy="175"
+          r="75"
+          stroke={
+            scaleFactor > 1.4 && isAnimating
+              ? "rgba(255, 165, 0, 0.5)"
+              : "rgba(221, 221, 221, 0.5)"
+          }
+          strokeWidth="17"
+          fill="none"
+          strokeDasharray="471.24"
+          strokeDashoffset={isAnimating ? "0" : "235.62"}
+          className="transition-all duration-[1000ms] ease-in-out"
+        />
+      </svg>
+
+      {/* Core */}
       <div
-        className="visualizer-wrapper"
+        className={`flex flex-col justify-center rounded-full ${
+          scaleFactor === 1 && "transition-all duration-1000 delay-300"
+        } absolute z-10 bg-gradient-to-t from-orange-400 via-orange-500 to-yellow-500`}
         style={{
-          width: `${300 * scaleFactor}px`,
-          height: `${300 * scaleFactor}px`,
-          transformOrigin: "center",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          width: `${isAnimating ? 80 * scaleFactor : "0"}px`,
+          height: `${isAnimating ? 80 * scaleFactor : "0"}px`,
         }}
       >
         <canvas
           ref={canvasRef}
-          width={300}
-          height={300}
-          className="visualizer-canvas"
+          width={80 * scaleFactor}
+          height={80 * scaleFactor}
+          style={{
+            borderRadius: "50%",
+          }}
         />
       </div>
     </div>

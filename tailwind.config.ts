@@ -6,7 +6,23 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  theme: {},
+  theme: {
+    extend: {
+      animation: {
+        heartbeat: "heartbeat 2s ease-in-out infinite",
+      },
+      keyframes: {
+        heartbeat: {
+          "0%, 100%": {
+            transform: "scale(1)", // Original size
+          },
+          "50%": {
+            transform: "scale(1.5)", // Slightly larger size for the heartbeat effect
+          },
+        },
+      },
+    },
+  },
   plugins: [],
 };
 export default config;
