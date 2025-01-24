@@ -178,7 +178,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ trackRef, isAnimating }) => {
         <circle
           cx="175"
           cy="175"
-          r="165"
+          r={isAnimating ? 165 : 155}
           stroke={"rgba(221, 221, 221, 0.5)"}
           strokeWidth="17"
           fill="none"
@@ -197,7 +197,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ trackRef, isAnimating }) => {
         <circle
           cx="175"
           cy="175"
-          r="135"
+          r={isAnimating ? 135 : 125}
           stroke={
             scaleFactor > 1.4 && isAnimating
               ? "rgba(255, 165, 0, 0.5)"
@@ -220,7 +220,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ trackRef, isAnimating }) => {
         <circle
           cx="175"
           cy="175"
-          r="105"
+          r={isAnimating ? 105 : 95}
           stroke={
             scaleFactor > 1.4 && isAnimating
               ? "rgba(255, 165, 0, 0.5)"
@@ -243,7 +243,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ trackRef, isAnimating }) => {
         <circle
           cx="175"
           cy="175"
-          r="75"
+          r={isAnimating ? 75 : 65}
           stroke={
             scaleFactor > 1.4 && isAnimating
               ? "rgba(255, 165, 0, 0.5)"
