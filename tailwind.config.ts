@@ -14,10 +14,10 @@ const config: Config = {
       keyframes: {
         heartbeat: {
           "0%, 100%": {
-            transform: "scale(1)", // Original size
+            transform: "scale(1)",
           },
           "50%": {
-            transform: "scale(1.5)", // Slightly larger size for the heartbeat effect
+            transform: "scale(1.3)",
           },
         },
       },

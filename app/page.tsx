@@ -105,7 +105,6 @@ function SimpleVoiceAssistant(props: {
     props.onStateChange(state);
   }, [props, state]);
 
-
   useEffect(() => {
     // Clean up when component unmounts
     return () => {
