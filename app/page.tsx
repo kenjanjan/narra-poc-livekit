@@ -122,7 +122,7 @@ function SimpleVoiceAssistant(props: {
   return (
     <div className=" mx-auto relative h-full">
       <Visualizer
-        // state={state}
+        state={state}
         trackRef={audioTrack}
         isAnimating={props.isAnimating}
       />
