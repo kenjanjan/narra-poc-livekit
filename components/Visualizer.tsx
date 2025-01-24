@@ -101,7 +101,7 @@ const Visualizer: React.FC<VisualizerProps> = ({
           cx="175"
           cy="175"
           r={isAnimating ? 165 : 155}
-          stroke={"rgba(221, 221, 221, 0.5)"}
+          stroke={"#FCF5F0"}
           strokeWidth="17"
           fill="none"
           strokeDasharray={getCircumference(isAnimating ? 165 : 155)}
@@ -122,11 +122,7 @@ const Visualizer: React.FC<VisualizerProps> = ({
           cx="175"
           cy="175"
           r={isAnimating ? 135 : 125}
-          stroke={
-            scaleFactor > 1.4 && isAnimating
-              ? "rgba(255, 165, 0, 0.5)"
-              : "rgba(221, 221, 221, 0.5)"
-          }
+          stroke={scaleFactor > 1.4 && isAnimating ? "#A7E7B9" : "#FCF5F0"}
           strokeWidth="17"
           fill="none"
           strokeDasharray={getCircumference(isAnimating ? 135 : 125)}
@@ -147,11 +143,7 @@ const Visualizer: React.FC<VisualizerProps> = ({
           cx="175"
           cy="175"
           r={isAnimating ? 105 : 95}
-          stroke={
-            scaleFactor > 1.4 && isAnimating
-              ? "rgba(255, 165, 0, 0.5)"
-              : "rgba(221, 221, 221, 0.5)"
-          }
+          stroke={scaleFactor > 1.4 && isAnimating ? "#A7E7B9" : "#FCF5F0"}
           strokeWidth="17"
           fill="none"
           strokeDasharray={getCircumference(isAnimating ? 105 : 95)}
@@ -172,11 +164,7 @@ const Visualizer: React.FC<VisualizerProps> = ({
           cx="175"
           cy="175"
           r={isAnimating ? 75 : 65}
-          stroke={
-            scaleFactor > 1.4 && isAnimating
-              ? "rgba(255, 165, 0, 0.5)"
-              : "rgba(221, 221, 221, 0.5)"
-          }
+          stroke={scaleFactor > 1.4 && isAnimating ? "#A7E7B9" : "#FCF5F0"}
           strokeWidth="17"
           fill="none"
           strokeDasharray={getCircumference(isAnimating ? 75 : 65)}
@@ -193,7 +181,7 @@ const Visualizer: React.FC<VisualizerProps> = ({
           scaleFactor === 1 && "transition-all duration-1000 delay-300"
         } ${
           state === "listening" && "animate-heartbeat"
-        } absolute z-10 bg-gradient-to-t from-orange-400 max-h-[105px] max-w-[105px] via-orange-500 to-yellow-500`}
+        } absolute z-10 bg-gradient-to-t from-[#16A34A] max-h-[105px] max-w-[105px] via-[#A7E7B9] to-[#FCF5F0]`}
         style={{
           width: `${isAnimating ? 80 * scaleFactor : "0"}px`,
           height: `${isAnimating ? 80 * scaleFactor : "0"}px`,
