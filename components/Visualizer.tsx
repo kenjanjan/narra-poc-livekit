@@ -167,6 +167,8 @@ const Visualizer: React.FC<VisualizerProps> = ({ trackRef, isAnimating }) => {
     };
   }, [trackRef]);
 
+  const getCircumference = (radius: number) => 2 * Math.PI * radius;
+
   return (
     <div className="h-full w-full relative flex items-center justify-center z-0">
       {/* Outer Circle3 */}
@@ -182,8 +184,10 @@ const Visualizer: React.FC<VisualizerProps> = ({ trackRef, isAnimating }) => {
           stroke={"rgba(221, 221, 221, 0.5)"}
           strokeWidth="17"
           fill="none"
-          strokeDasharray="1036.72"
-          strokeDashoffset={isAnimating ? "0" : "518.36"}
+          strokeDasharray={getCircumference(isAnimating ? 165 : 155)}
+          strokeDashoffset={
+            isAnimating ? "0" : getCircumference(isAnimating ? 165 : 155) / 2
+          }
           className="transition-all duration-[1300ms] ease-in-out"
         />
       </svg>
@@ -205,8 +209,10 @@ const Visualizer: React.FC<VisualizerProps> = ({ trackRef, isAnimating }) => {
           }
           strokeWidth="17"
           fill="none"
-          strokeDasharray="848.23"
-          strokeDashoffset={isAnimating ? "0" : "424.12"}
+          strokeDasharray={getCircumference(isAnimating ? 135 : 125)}
+          strokeDashoffset={
+            isAnimating ? "0" : getCircumference(isAnimating ? 135 : 125) / 2
+          }
           className="transition-all duration-[1200ms] ease-in-out"
         />
       </svg>
@@ -228,8 +234,10 @@ const Visualizer: React.FC<VisualizerProps> = ({ trackRef, isAnimating }) => {
           }
           strokeWidth="17"
           fill="none"
-          strokeDasharray="659.73"
-          strokeDashoffset={isAnimating ? "0" : "329.86"}
+          strokeDasharray={getCircumference(isAnimating ? 105 : 95)}
+          strokeDashoffset={
+            isAnimating ? "0" : getCircumference(isAnimating ? 105 : 95) / 2
+          }
           className="transition-all duration-[1100ms] ease-in-out"
         />
       </svg>
@@ -251,8 +259,10 @@ const Visualizer: React.FC<VisualizerProps> = ({ trackRef, isAnimating }) => {
           }
           strokeWidth="17"
           fill="none"
-          strokeDasharray="471.24"
-          strokeDashoffset={isAnimating ? "0" : "235.62"}
+          strokeDasharray={getCircumference(isAnimating ? 75 : 65)}
+          strokeDashoffset={
+            isAnimating ? "0" : getCircumference(isAnimating ? 75 : 65) / 2
+          }
           className="transition-all duration-[1000ms] ease-in-out"
         />
       </svg>
