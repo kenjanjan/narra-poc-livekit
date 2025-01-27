@@ -94,8 +94,6 @@ const Visualizer: React.FC<VisualizerProps> = ({
 
   const getCircumference = (radius: number) => 2 * Math.PI * radius;
 
-  console.log("state", state);
-
   return (
     <div className="h-full w-full relative flex items-center justify-center z-0">
       {/* Outer Circle3 */}
@@ -129,7 +127,7 @@ const Visualizer: React.FC<VisualizerProps> = ({
           cx="175"
           cy="175"
           r={isAnimating ? 135 : 125}
-          stroke={scaleFactor > 1.4 && isAnimating ? "#A7E7B9" : "#FCF5F0"}
+          stroke={scaleFactor > 1.2 && isAnimating ? "#A7E7B9" : "#FCF5F0"}
           strokeWidth="17"
           fill="none"
           strokeDasharray={getCircumference(isAnimating ? 135 : 125)}
@@ -150,7 +148,7 @@ const Visualizer: React.FC<VisualizerProps> = ({
           cx="175"
           cy="175"
           r={isAnimating ? 105 : 95}
-          stroke={scaleFactor > 1.4 && isAnimating ? "#A7E7B9" : "#FCF5F0"}
+          stroke={scaleFactor > 1.2 && isAnimating ? "#A7E7B9" : "#FCF5F0"}
           strokeWidth="17"
           fill="none"
           strokeDasharray={getCircumference(isAnimating ? 105 : 95)}
@@ -171,7 +169,7 @@ const Visualizer: React.FC<VisualizerProps> = ({
           cx="175"
           cy="175"
           r={isAnimating ? 75 : 65}
-          stroke={scaleFactor > 1.4 && isAnimating ? "#A7E7B9" : "#FCF5F0"}
+          stroke={scaleFactor > 1.2 && isAnimating ? "#A7E7B9" : "#FCF5F0"}
           strokeWidth="17"
           fill="none"
           strokeDasharray={getCircumference(isAnimating ? 75 : 65)}
