@@ -44,19 +44,7 @@ export default function Page() {
     updateConnectionDetails(connectionDetailsData);
   }, []);
 
-  const [audioTrack, setAudioTrack] = useState<HTMLAudioElement | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
-  const startAudio = () => {
-    const audioElement = new Audio("/audio/sample2.mp3");
-    audioElement.loop = true;
-    audioElement.autoplay = true;
-
-    // Start playing the audio
-    audioElement.play().catch((error) => {
-      console.error("Error starting audio playback:", error);
-    });
-    setAudioTrack(audioElement);
-  };
 
   return (
     <main
@@ -72,7 +60,6 @@ export default function Page() {
         onMediaDeviceFailure={onDeviceFailure}
         onDisconnected={() => {
           updateConnectionDetails(undefined);
-          setAudioTrack(null); // SAMPLE AUDIO TEST - CAN BE REMOVED
           setIsAnimating(false);
         }}
         className="grid grid-rows-[2fr_1fr] items-center bg-white"
@@ -80,13 +67,11 @@ export default function Page() {
         <SimpleVoiceAssistant
           onStateChange={setAgentState}
           isAnimating={isAnimating}
-          audioTrack={audioTrack}
         />
         <ControlBar
           onConnectButtonClicked={onConnectButtonClicked}
           agentState={agentState}
           setIsAnimating={setIsAnimating}
-          startAudio={startAudio}
         />
         <RoomAudioRenderer />
         <NoAgentNotification state={agentState} />
@@ -97,23 +82,12 @@ export default function Page() {
 
 function SimpleVoiceAssistant(props: {
   onStateChange: (state: AgentState) => void;
-  audioTrack: HTMLAudioElement | null;
   isAnimating: boolean;
 }) {
   const { state, audioTrack } = useVoiceAssistant();
   useEffect(() => {
     props.onStateChange(state);
   }, [props, state]);
-
-  useEffect(() => {
-    // Clean up when component unmounts
-    return () => {
-      if (props.audioTrack) {
-        props.audioTrack.pause();
-        props.audioTrack.currentTime = 0;
-      }
-    };
-  }, [props.audioTrack]);
 
   useEffect(() => {
     props.onStateChange(state); // Pass the state to the parent component
@@ -133,7 +107,6 @@ function ControlBar(props: {
   onConnectButtonClicked: () => void;
   agentState: AgentState;
   setIsAnimating: (isAnimating: boolean) => void; // Add the setIsAnimating prop
-  startAudio: () => void; // Add the startAudio prop
 }) {
   /**
    * Use Krisp background noise reduction when available.

@@ -1,10 +1,13 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { AgentState, TrackReference } from "@livekit/components-react";
+import {
+  AgentState,
+  TrackReferenceOrPlaceholder,
+} from "@livekit/components-react";
 
 interface VisualizerProps {
   state: AgentState;
-  trackRef: TrackReference | undefined;
+  trackRef: TrackReferenceOrPlaceholder | undefined;
   isAnimating: boolean;
 }
 
@@ -14,74 +17,78 @@ const Visualizer: React.FC<VisualizerProps> = ({
   isAnimating,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationRef = useRef<number | null>(null);
 
-  const [scaleFactor, setScaleFactor] = useState(1); // State to track the scale factor
+  const [scaleFactor, setScaleFactor] = useState(1);
 
   useEffect(() => {
-    if (!trackRef?.publication || !trackRef.publication.track) return;
-
-    const track = trackRef.publication.track;
-
-    // Ensure track is an audio track
-    if (track.kind !== "audio") {
+    const track = trackRef?.publication?.track;
+    if (!track || track.kind !== "audio") {
       console.warn("Visualizer only works with audio tracks.");
       return;
     }
+    const initializeAnalyser = () => {
+      const audioContext = new (window.AudioContext || window.AudioContext)();
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
 
-    // Initialize audio context and analyser
-    const audioContext = new (window.AudioContext || window.AudioContext)();
-    const analyser = audioContext.createAnalyser();
-    analyser.fftSize = 256; // Controls the data resolution
-    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+      const source = audioContext.createMediaStreamSource(
+        new MediaStream([track.mediaStreamTrack])
+      );
+      source.connect(analyser);
 
-    // Create a MediaStream from the track and connect to the analyser
-    const mediaStream = new MediaStream([track.mediaStreamTrack]);
-    const source = audioContext.createMediaStreamSource(mediaStream);
-    source.connect(analyser);
-    analyser.connect(audioContext.destination);
-
-    audioContextRef.current = audioContext;
-    analyserRef.current = analyser;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (!ctx || !canvas) return;
-
-    const draw = () => {
-      if (!analyserRef.current || !ctx) return;
-
-      // Get frequency data
-      analyserRef.current.getByteFrequencyData(dataArray);
-
-      // Dynamically calculate the max frequency and use it to scale the canvas dimensions
-      const maxFrequency = Math.max(...Array.from(dataArray));
-
-      // Calculate the scale factor based on the maximum frequency (loudness)
-      const newScaleFactor = (maxFrequency / 250) * 0.5 + 1; // Dynamic scaling based on frequency amplitude
-      setScaleFactor(newScaleFactor); // Update the scaleFactor state
-
-      // Calculate the new size for the canvas and the wrapper div based on the scale factor
-      const newSize = 200 * newScaleFactor; // Starting size of 300px, adjusted by scaleFactor
-      canvas.width = newSize;
-      canvas.height = newSize;
-
-      // Clear the canvas before drawing
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw a dynamic circle based on the maximum frequency
-      // Continue the animation
-      animationRef.current = requestAnimationFrame(draw);
+      return { audioContext, analyser };
     };
 
-    draw();
+    // Main visualizer drawing logic
+    const drawVisualizer = (
+      ctx: CanvasRenderingContext2D,
+      analyser: AnalyserNode,
+      canvas: HTMLCanvasElement,
+      dataArray: Uint8Array<ArrayBuffer>
+    ) => {
+      const draw = () => {
+        if (!analyser || !ctx || !canvas) return;
 
-    // Cleanup resources when unmounting
+        // Get frequency data
+        analyser.getByteFrequencyData(dataArray);
+
+        // Calculate dynamic scale based on frequency amplitude
+        const maxFrequency = Math.max(...Array.from(dataArray));
+        const newScaleFactor = (maxFrequency / 450) * 0.5 + 1;
+        setScaleFactor(newScaleFactor);
+
+        // Adjust canvas size dynamically
+        const newSize = Math.min(200 * scaleFactor);
+        canvas.width = newSize;
+        canvas.height = newSize;
+
+        // Clear canvas and draw
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Continue animation
+        animationRef.current = requestAnimationFrame(draw);
+      };
+
+      draw();
+    };
+
+    // Initialization
+    const { audioContext, analyser } = initializeAnalyser();
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+    if (ctx && canvas) {
+      analyserRef.current = analyser;
+      drawVisualizer(ctx, analyser, canvas, dataArray);
+    }
+
+    // Cleanup resources
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      if (audioContextRef.current) audioContextRef.current.close();
+      if (audioContext) audioContext.close();
     };
   }, [trackRef]);
 
